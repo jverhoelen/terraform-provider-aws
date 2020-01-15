@@ -128,7 +128,7 @@ func TestAccAWSCognitoUserPool_withAdminCreateUserConfiguration(t *testing.T) {
 			{
 				Config: testAccAWSCognitoUserPoolConfig_withAdminCreateUserConfigurationUpdated(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "admin_create_user_config.0.unused_account_validity_days", "7"),
+					resource.TestCheckResourceAttr(resourceName, "admin_create_user_config.0.unused_account_validity_days", "6"),
 					resource.TestCheckResourceAttr(resourceName, "admin_create_user_config.0.allow_admin_create_user_only", "false"),
 					resource.TestCheckResourceAttr(resourceName, "admin_create_user_config.0.invite_message_template.0.email_message", "Your username is {username} and constant password is {####}. "),
 					resource.TestCheckResourceAttr(resourceName, "admin_create_user_config.0.invite_message_template.0.email_subject", "Foo{####}BaBaz"),
@@ -486,6 +486,7 @@ func TestAccAWSCognitoUserPool_withPasswordPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "password_policy.0.require_numbers", "false"),
 					resource.TestCheckResourceAttr(resourceName, "password_policy.0.require_symbols", "true"),
 					resource.TestCheckResourceAttr(resourceName, "password_policy.0.require_uppercase", "false"),
+					resource.TestCheckResourceAttr(resourceName, "password_policy.0.temporary_password_validity_days", "7"),
 				),
 			},
 			{
@@ -502,6 +503,7 @@ func TestAccAWSCognitoUserPool_withPasswordPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "password_policy.0.require_numbers", "true"),
 					resource.TestCheckResourceAttr(resourceName, "password_policy.0.require_symbols", "false"),
 					resource.TestCheckResourceAttr(resourceName, "password_policy.0.require_uppercase", "true"),
+					resource.TestCheckResourceAttr(resourceName, "password_policy.0.temporary_password_validity_days", "14"),
 				),
 			},
 		},
@@ -885,7 +887,7 @@ resource "aws_cognito_user_pool" "test" {
 
   admin_create_user_config {
     allow_admin_create_user_only = false
-    unused_account_validity_days = 7
+    unused_account_validity_days = 6
 
     invite_message_template {
       email_message = "Your username is {username} and constant password is {####}. "
@@ -1089,11 +1091,12 @@ resource "aws_cognito_user_pool" "test" {
   name = "terraform-test-pool-%s"
 
   password_policy {
-    minimum_length    = 7
-    require_lowercase = true
-    require_numbers   = false
-    require_symbols   = true
-    require_uppercase = false
+    minimum_length                   = 7
+    require_lowercase                = true
+    require_numbers                  = false
+    require_symbols                  = true
+    require_uppercase                = false
+    temporary_password_validity_days = 7
   }
 }
 `, name)
@@ -1105,11 +1108,12 @@ resource "aws_cognito_user_pool" "test" {
   name = "terraform-test-pool-%s"
 
   password_policy {
-    minimum_length    = 9
-    require_lowercase = false
-    require_numbers   = true
-    require_symbols   = false
-    require_uppercase = true
+    minimum_length                   = 9
+    require_lowercase                = false
+    require_numbers                  = true
+    require_symbols                  = false
+    require_uppercase                = true
+    temporary_password_validity_days = 14
   }
 }
 `, name)
