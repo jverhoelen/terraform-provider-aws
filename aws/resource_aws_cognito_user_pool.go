@@ -150,6 +150,13 @@ func resourceAwsCognitoUserPool() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validateArn,
 						},
+						"from_email_address": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ValidateFunc: validation.Any(
+								validation.StringInSlice([]string{""}, false),
+							),
+						},
 						"email_sending_account": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -546,6 +553,10 @@ func resourceAwsCognitoUserPoolCreate(d *schema.ResourceData, meta interface{}) 
 				emailConfigurationType.SourceArn = aws.String(v.(string))
 			}
 
+			if v, ok := config["from_email_address"]; ok && v.(string) != "" {
+				emailConfigurationType.From = aws.String(v.(string))
+			}
+
 			if v, ok := config["email_sending_account"]; ok && v.(string) != "" {
 				emailConfigurationType.EmailSendingAccount = aws.String(v.(string))
 			}
@@ -837,6 +848,10 @@ func resourceAwsCognitoUserPoolUpdate(d *schema.ResourceData, meta interface{}) 
 
 			if v, ok := config["source_arn"]; ok && v.(string) != "" {
 				emailConfigurationType.SourceArn = aws.String(v.(string))
+			}
+
+			if v, ok := config["from_email_address"]; ok && v.(string) != "" {
+				emailConfigurationType.From = aws.String(v.(string))
 			}
 
 			if v, ok := config["email_sending_account"]; ok && v.(string) != "" {
